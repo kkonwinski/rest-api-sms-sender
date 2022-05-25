@@ -163,6 +163,9 @@
     "psr/log": {
         "version": "3.0.0"
     },
+    "roave/security-advisories": {
+        "version": "dev-latest"
+    },
     "stof/doctrine-extensions-bundle": {
         "version": "1.7",
         "recipe": {
@@ -259,6 +262,12 @@
             "src/Controller/.gitignore",
             "src/Kernel.php"
         ]
+    },
+    "symfony/http-client": {
+        "version": "v6.0.8"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v3.0.1"
     },
     "symfony/http-foundation": {
         "version": "v6.0.8"

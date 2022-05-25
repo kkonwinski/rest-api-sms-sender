@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,9 +10,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    denormalizationContext: [
+        'groups' => ['user:write']
+    ],
+    normalizationContext: [
+        'groups' => ['user:read']
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,25 +30,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user:read', 'user:write'])]
     private $email;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['user:write'])]
+
     private $password;
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['user:read', 'user:write'])]
     private $firstname;
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['user:read', 'user:write'])]
     private $lastname;
 
     #[ORM\Column(type: 'string', unique: true)]
     #[Gedmo\Slug(fields: ["firstname", "lastname"])]
+    #[Groups(['user:read'])]
     private $slug;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Book::class, orphanRemoval: true)]
+    #[Groups(['user:read', 'user:write'])]
     private $books;
 
     public function __construct()
@@ -188,13 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @param mixed $slug
-     */
-    public function setSlug($slug): void
-    {
-        $this->slug = $slug;
-    }
+
 
 
 }
