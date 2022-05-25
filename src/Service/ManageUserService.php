@@ -18,7 +18,7 @@ class ManageUserService
     }
 
 
-    public function deleteUser(mixed $id)
+    public function deleteUser(int $id)
     {
         //get user repository
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -26,18 +26,16 @@ class ManageUserService
         $user = $userRepository->find($id);
         //check if user exists
         if ($user) {
-            //get user books
-            $books = $user->getBooks();
-            //check if user has books
-            if ($books) {
-                //remove user books
-                $this->entityManager->remove($books);
-            }
-            //remove user
+            //delete user
             $this->entityManager->remove($user);
-            //flush changes
+            //save changes
             $this->entityManager->flush();
-            $this->smsSenderService->sendSms($user->getId());
+            //send sms
+
+            $this->smsSenderService->sendSms($id);
         }
+
+
+
     }
 }

@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
 use App\Service\ManageUserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -20,17 +21,18 @@ class UserSubscriber implements EventSubscriberInterface
         $this->manageUserService = $manageUserService;
     }
 
-    //event api platform subscriber catching request and id parameter from url
+    //event api platform subscriber catching request
 
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
         $method = $request->getMethod();
-        $route = $request->attributes->get('_route');
-        $id = $request->attributes->get('id');
+        $route = $request->getPathInfo();
 
-        if ($method === 'DELETE' && $route === 'api_users_delete') {
-            $this->manageUserService->deleteUser($id);
+        $id = $this->explodeString($route);
+
+        if ($method === 'DELETE') {
+            $this->manageUserService->deleteUser((int)$id);
         }
     }
 
@@ -41,6 +43,12 @@ class UserSubscriber implements EventSubscriberInterface
             KernelEvents::REQUEST => ['onKernelRequest', EventPriorities::PRE_WRITE],
 
         ];
+    }
+    //explode string /api/users/106 to array and return last element
+    public function explodeString($string)
+    {
+        $array = explode('/', $string);
+        return end($array);
     }
 
 }
