@@ -53,14 +53,20 @@ class Book
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
+        $this->setShortDescription($this->description);
         return $this;
     }
 
-    public function __construct()
+
+    public function setShortDescription($description = null): self
     {
-        $this->shortDescription = substr($this->description, 0, 100);
+        if ($description === null) {
+            $description = $this->getDescription();
+        }
+        $this->shortDescription = substr($description, 0, 100);
+        return $this;
     }
+
 
     public function getShortDescription(): ?string
     {

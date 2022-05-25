@@ -8,8 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -33,6 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $lastname;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Gedmo\Slug(fields: ["firstname", "lastname"])]
     private $slug;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Book::class, orphanRemoval: true)]
@@ -154,10 +157,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->slug;
     }
 
-    public function setSlug($slug): void
-    {
-        $this->slug = $slug;
-    }
 
     /**
      * @return Collection<int, Book>
@@ -187,6 +186,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @param mixed $slug
+     */
+    public function setSlug($slug): void
+    {
+        $this->slug = $slug;
     }
 
 
