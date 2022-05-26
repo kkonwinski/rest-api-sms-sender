@@ -21,9 +21,5 @@ RUN pecl install xdebug-3.1.3 && docker-php-ext-enable xdebug
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 # Install symfony command
 RUN curl -sS https://get.symfony.com/cli/installer | bash && mv /root/.symfony/bin/symfony /usr/local/bin/symfony
-# Install composer dependencies for symfony project and generate jwt secret
-
-CMD bash -c "cd /var/www/html && composer install && bin/console lexik:jwt:generate-keypair"
-
 # Set umask to 0000 (newly created files will have 777 permissions)
 RUN echo "umask 0000" >> /root/.bashrc
